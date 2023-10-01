@@ -3,7 +3,7 @@
 
 ## Authors
 * **Simone Cirnelli** - *main contributor*
-* **Benedetta Dukic** - *main contributor* 
+* **Benedetta Dukic** - *main contributor*  - [SimCir01](https://github.com/SimCir01)
 * **Fabrizio Ravelli** - *main contributor* - [reFraw](https://github.com/reFraw)
 * **Pierfrancesco Romano** - *main contributor*
 
