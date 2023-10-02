@@ -10,5 +10,6 @@
 ## Descrizione
 ### Descrizione esercitazioni
 - Esercitazione 1 : Cinematica diretta
+- Esercitazione 2 : Jacobiano geometrico
 
 ### Descrizione progetto
