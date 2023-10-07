@@ -11,5 +11,6 @@
 ### Descrizione esercitazioni
 - Esercitazione 1 : Cinematica diretta
 - Esercitazione 2 : Jacobiano geometrico
-
+- Esercitazione 3 : Inversione cinematica
+  
 ### Descrizione progetto
