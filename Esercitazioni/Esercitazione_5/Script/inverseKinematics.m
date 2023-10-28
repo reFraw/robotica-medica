@@ -70,7 +70,7 @@ function [q, dq, positionErrors, orientationErrors, spacePath, DHS] = inverseKin
         orientationGain = 5;
     end
 
-    if ~exist('algorithmType', 'var') || algorithmType ~= "pinv" || algorithmType ~= "transp"
+    if ~exist('algorithmType', 'var') || (algorithmType ~= "pinv" && algorithmType ~= "transp")
         algorithmType = "pinv";
     end
     

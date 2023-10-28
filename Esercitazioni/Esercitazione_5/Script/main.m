@@ -7,10 +7,11 @@ clc
 %%%%% INPUT PARAMETERS %%%%%
 pD = [0.5 0.3 0.4]';                     % [X Y Z]
 oD = [pi/6 pi/4 pi/4]';                  % [phi theta psi] - ZYZ
-start = [pi/6 0 pi/2 pi/2 pi/4 0 0]';    % Initial set-up (Joint variables)
+start = [0 0 0 pi/4 0 0 0]';    % Initial set-up (Joint variables)
 simulationTime = 5;                      % Simulation time [s]
-positionGain = 2;                        % Position gain for KP matrix
-orientationGain = 2;                     % Orientation gain for KO matrix
+positionGain = 3;                        % Position gain for KP matrix
+orientationGain = 3;                     % Orientation gain for KO matrix
+algorithmType = "transp";                  % Set "transp" for transpose algorithm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 [q, dq, pErr, oErr, path, DHS] = inverseKinematics( ...
@@ -19,7 +20,8 @@ orientationGain = 2;                     % Orientation gain for KO matrix
     start, ...
     simulationTime, ...
     positionGain, ...
-    orientationGain);
+    orientationGain, ...
+    algorithmType);
 
 %% Errors plot
 

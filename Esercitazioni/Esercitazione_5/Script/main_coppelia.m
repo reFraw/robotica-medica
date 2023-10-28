@@ -18,6 +18,7 @@ startConfiguration =  [pi/6 0 pi/2 pi/2 pi/4 0 0]';
 positionGain = 5;
 orientationGain = 5;
 simulationTime = 3;
+algorithmType = "pinv";
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -42,7 +43,7 @@ handle_joint = my_get_handle_Joint(vrep,clientID);      % handle to the joints
     simulationTime, ...
     positionGain, ...
     orientationGain, ...
-    "pinv");
+    algorithmType);
 
 for i=1:N
     
