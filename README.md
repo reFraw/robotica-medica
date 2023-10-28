@@ -9,7 +9,10 @@
 
 ## Descrizione
 ### Descrizione esercitazioni
-- Esercitazione 1 : Cinematica diretta
-- Esercitazione 2 : Jacobiano geometrico
+- **Esercitazione 1** : Cinematica diretta
+- **Esercitazione 2** : Jacobiano geometrico
+- **Esercitazione 3** : Inversione cinematica per manipolatore planare a 3 bracci
+- **Esercitazione 4** : Inversione cinematica per manipolatore planare a 3 bracci con errore di orientamento espresso tramite quaternioni
+- **Esercitazione 5** : Inversione cinematica per manipolatore ridondante (Kinova Jaco2)
   
 ### Descrizione progetto
