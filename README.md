@@ -14,5 +14,6 @@
 - **Esercitazione 3** : Inversione cinematica per manipolatore planare a 3 bracci
 - **Esercitazione 4** : Inversione cinematica per manipolatore planare a 3 bracci con errore di orientamento espresso tramite quaternioni
 - **Esercitazione 5** : Inversione cinematica per manipolatore ridondante (Kinova Jaco2)
+- **Esercitazione 6** : Pianificazione di traiettorie (Kinova Jaco2)
   
 ### Descrizione progetto
