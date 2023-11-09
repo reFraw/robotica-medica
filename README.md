@@ -15,5 +15,9 @@
 - **Esercitazione 4** : Inversione cinematica per manipolatore planare a 3 bracci con errore di orientamento espresso tramite quaternioni
 - **Esercitazione 5** : Inversione cinematica per manipolatore ridondante (Kinova Jaco2)
 - **Esercitazione 6** : Pianificazione di traiettorie (Kinova Jaco2)
+
+### Descrizione Connect2Coppelia
+Questa funzione permette di visualizzare il movimento del manipolatore Jaco2 tramite il software CoppeliaSim. Per utilizzare la funzione posizionarla nella cartella di lavoro insieme alla cartella *function_coppelia* e aggiungerla al path di MATLAB.  
+La funzione prende in input una matrice rappresentativa delle variabili di giunto nei singoli istanti e il tempo di simulazione per visualizzare il movimento su CoppeliaSim.
   
 ### Descrizione progetto
