@@ -9,7 +9,8 @@ clc
 addpath("config\");
 addpath("functions\");
 addpath("functions_coppelia\");
-addpath("vrepScene\")
+addpath("vrepScene\");
+addpath(genpath("connessione-coppelia-matlab\"));
 
 % Definizione della configurazione iniziale
 init;
@@ -26,8 +27,8 @@ t = 0 : samplingTime : simulationTime;
 nPoints = length(t);
 
 % Matrici di guadagno
-positionGain = 200;
-orientationGain = 200;
+positionGain = 50;
+orientationGain = 50;
 KP = diag([positionGain positionGain positionGain]);
 KO = diag([orientationGain orientationGain orientationGain]);
 
@@ -49,7 +50,7 @@ DHS(:,:,1) = DH;
 T = DirectKinematics(DH);
 
 startPoint = T(1:3, 4, nJoints);
-endPoint = startPoint + [0 0 0.3]';
+endPoint = startPoint + [0.5 0.7 0.3]';
 segmentNorm = norm(endPoint - startPoint);
 
 cruiseVel = 0.07;
@@ -57,6 +58,8 @@ finalTime = 5;
 
 desiredOrientEE = T(1:3, 1:3, nJoints);
 desiredOrientEE = rot2quat(desiredOrientEE);
+
+desiredVelEE_versor = (endPoint - startPoint)/segmentNorm;
 
 % Main control loop
 for i = 1 : nPoints
@@ -83,6 +86,7 @@ for i = 1 : nPoints
         currentTime);
 
     desiredPosEE = startPoint + (S/segmentNorm)*(endPoint - startPoint);
+    desiredVelEE = desiredVelEE_versor*dotS;
     
     desiredAngularVelEE = 0;
     
@@ -106,7 +110,7 @@ for i = 1 : nPoints
     q(:,i) = DH(:,4);
     
     % Calcolo dell'errore amplificato
-    amplifiedErr = [dotS + KP*ePi; desiredAngularVelEE + KO*eOi];
+    amplifiedErr = [desiredVelEE + KP*ePi; desiredAngularVelEE + KO*eOi];
     
     % Calcolo dello Jacobiano geometrico e inversione
     J = Jacobian(DH);
@@ -124,6 +128,13 @@ for i = 1 : nPoints
     DHS(:,:,2) = DH;
 
 end
+
+%% Blocco di simulazione - CoppeliaSim
+
+% Variabili di simulazione CoppeliaSim
+coppeliaSimTime = 11;
+
+connect = connect2coppelia(q, coppeliaSimTime);
 
 %% Plot degli errori
 f1 = figure;
@@ -190,10 +201,3 @@ legend([p1 p2 p3 p4], "Start point", ...
     "Traiettoria pianificata", ...
     "Traiettoria reale");
 grid on
-
-%% Blocco di simulazione - CoppeliaSim
-
-% Variabili di simulazione CoppeliaSim
-coppeliaSimTime = 15;
-
-connect = connect2coppelia(q, coppeliaSimTime);
