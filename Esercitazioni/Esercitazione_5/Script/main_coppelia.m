@@ -12,8 +12,8 @@ addpath('functions_matlab/');
 
 %%%%%%%%%%%%%%%%% INPUT PARAMETERS %%%%%%%%%%%%%%%%%
 
-setPoint = [0.12 0.12 0.7]';
-orientation = [0 pi 0]';
+setPoint = [0.4 0.3 0.7]';
+orientation = [0 pi pi/4]';
 startConfiguration =  [pi/6 0 pi/2 pi/2 pi/4 0 0]';
 positionGain = 5;
 orientationGain = 5;
