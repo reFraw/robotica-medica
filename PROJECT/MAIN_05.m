@@ -40,8 +40,8 @@ Rif = Ri'*Rf;
 [axis, thetaFin] = rot2axisangle(Rif);
 
 % Guadagni del manipolatore
-pGain = 100;
-oGain = 100;
+pGain = 75;
+oGain = 75;
 K = diag([ ...
     pGain*[1 1 1], ...
     oGain*[1 1 1]]);
@@ -59,10 +59,10 @@ manipulability = zeros(nPoints,1);
 minSVD = zeros(nPoints,1);
 maxSVD = zeros(nPoints,1);
 
-
 for i = 1 : nPoints
     currentTime = t(i);
-
+    
+    % Posizione e orientamento correnti
     T = DirectKinematics(DH);
     currentPos = T(1:3,4,DOF);
     currentQuat = rot2quat(T(1:3,1:3,DOF));
@@ -88,6 +88,8 @@ for i = 1 : nPoints
         lastIndex = i;
 
     else
+        % Traslazione temporale per evitare sfasamento tra movimento
+        % dell'E.E. e movimento del punto target.
         traslatedTime = currentTime - phaseOneTime;
 
         % Pianificazione posizione - Fase 2
@@ -95,7 +97,7 @@ for i = 1 : nPoints
         desiredVel = [0 0 2*pi*0.05*cos(2*pi*traslatedTime)]';
         pTargetMove2(i-lastIndex) = desiredPos(3) - 0.1;
 
-        % Pianificaziobne orientamento - Fase 2
+        % Pianificazione orientamento - Fase 2
         desiredAngularVel = zeros(3,1);
 
     end
@@ -113,21 +115,33 @@ for i = 1 : nPoints
 
     J = Jacobian(DH);
     invJ = pinv_damped(J);
-    M = inv(J*J');
 
+    % Calcolo della matrice di manipolabilità
+    M = inv(J*J');
+    
+    % Calcolo del minimo e massimo valor singolare di J
     S = svd(J);
     minSVDvalue = min(S);
     minSVD(i) = minSVDvalue;
     maxSVDvalue = max(S);
     maxSVD(i) = maxSVDvalue;
-
+    
+    % Calcolo della manipolabilità
     manipulability(i) = minSVDvalue/maxSVDvalue;
-
+    
+    % Individuazione della direzione di minima manipolabilità nello spazio
+    % operativo. L'autovettore corrispondente viene normalizzato per il
+    % valore singolare associato.
     [eigenvec, eigenval] = eig(M);
-    minManipDirection = eigenvec(:,1)./min(diag(eigenval));
-    qDot0 = k0*invJ*minManipDirection;
+    minManipDirection = eigenvec(:,1)./(sqrt(min(diag(eigenval))));
 
-    dqi = invJ*(feedForwardTerm + K*e)+(eye(7)-invJ*J)*qDot0;
+    % La velocità nello spazio dei giunti da proiettare nel nullo di J viene
+    % definita come la velocità che forza lo spostamento nella direzione
+    % di minima manipolabilità, inducendo l'ellissoide a tendere ad una sfera.
+    qDot0 = k0*invJ*minManipDirection;
+    kernelProjector = eye(7) - invJ*J;
+
+    dqi = invJ*(feedForwardTerm + K*e) + kernelProjector*qDot0;
     dq(:,i) = dqi;
     q(:,i) = DH(:,4);
 
@@ -141,8 +155,6 @@ end
 
 pTargetMove2 = pTargetMove2';
 pTargetMove = [pTargetMove1; pTargetMove2];
-
-save("OUTPUT_FILE\manipulability.mat", "manipulability");
 
 %% Connessione CoppeliaSim
 conn = connect2coppelia(q, simulationTime, samplingTime);
@@ -162,7 +174,7 @@ plot(t, oriErr, LineWidth=1.3);
 xlabel("Tempo [s]");
 ylabel("Errore [u.a.]");
 title("Errore di orientamento");
-legend("\phi", "\theta", "\psi");
+legend("\epsilon_x", "\epsilon_y", "\epsilon_z");
 grid on
 
 figure
@@ -203,11 +215,11 @@ ylabel("Manipolabilità");
 title("Andamento della manipolabilità")
 grid on
 
-
-%%
 figure
-DrawRobot(DHS(:,:,1))
+plot(t, minSVD, LineWidth=1.4, DisplayName="Minimo valor singolare");
 hold on
-DrawRobot(DHS(:,:,2))
-plot3(positionEE(1,:), positionEE(2,:), positionEE(3,:), LineWidth=1.3);
+plot(t, maxSVD, LineWidth=1.4, DisplayName="Massimo valor singolare");
+xlabel("Tempo [s]");
+title("Andamento del minimo e massimo valor singolare");
+legend()
 grid on

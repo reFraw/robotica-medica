@@ -32,7 +32,7 @@ xd = 0.2;
 xDotd = 0;
 xDDotd = 0;
 
-mHat = 5;
+mHat = 3;
 m = 3;
 
 for i = 1 : nPoints

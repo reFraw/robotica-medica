@@ -119,7 +119,7 @@ plot(t, oriErr, LineWidth=1.3);
 xlabel("Tempo [s]");
 ylabel("Errore [u.a.]");
 title("Errore di orientamento");
-legend("\phi", "\theta", "\psi");
+legend("\epsilon_x", "\epsilon_y", "\epsilon_z");
 grid on
 
 figure

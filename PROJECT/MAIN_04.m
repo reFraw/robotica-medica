@@ -33,7 +33,7 @@ Rc = zRot(pi/2);
 thetaFin = pi;
 normPath = thetaFin*rho;
 
-Rf = [1 0 0;0 -1 0;0 0 -1];
+Rf = xRot(pi);
 Rif = Ri'*Rf;
 [axis, thetaFin] = rot2axisangle(Rif);
 
@@ -109,7 +109,7 @@ end
 
 DHS(:,:,2) = DH;
 finalJointConfiguration = DH(:,4);
-save("OUTPUT_FILE\jointConfigurtion_MAIN03.mat", "finalJointConfiguration");
+save("OUTPUT_FILE\jointConfigurtion_MAIN04.mat", "finalJointConfiguration");
 
 %% Connessione CoppeliaSim
 conn = connect2coppelia(q, simulationTime, samplingTime);
@@ -128,7 +128,7 @@ plot(t, oriErr, LineWidth=1.3);
 xlabel("Tempo [s]");
 ylabel("Errore [u.a.]");
 title("Errore di orientamento");
-legend("\phi", "\theta", "\psi");
+legend("\epsilon_x", "\epsilon_y", "\epsilon_z");
 grid on
 
 figure

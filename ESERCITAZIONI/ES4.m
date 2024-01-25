@@ -6,14 +6,11 @@ close all
 clc
 
 addpath("..\FUNCTIONS\");
+addpath("..\DRAW_ROBOT\");
+addpath("FILES\");
 
 % Richiamo la configurazione iniziale del manipolatore
-a = [1 1 1]';
-alfa = [0 0 0]';
-d = [0 0 0]';
-theta = [pi/2 -pi/2 -pi/2]';
-
-DH = [a alfa d theta];
+init_ES1;
 
 % Definisco le variabili temporali di simulazione
 Tf = 3;
@@ -32,8 +29,9 @@ errors = zeros(6, nPoints);
 DHS = zeros(nLink, 4, nPoints);
 
 % Definisco il set point desiderato
-xd = [1.8 0.6 0]';
-QD = [0.3 0.13 0.13 0.13]';
+xd = [0.6 0.6 0]';
+Rd = zyz2rot([pi/3 0 0]);
+QD = rot2quat(Rd);
 
 % Definisco la matrice dei guadagni
 matrixK_P = diag([25 25 25]);
@@ -53,7 +51,7 @@ for i = 1 : nPoints
     T = DirectKinematics(DH);
     T0 = T(:,:,nLink);
     
-    % Determino posizione e orientamento corrente dell'e.e come [x, y, phi]'
+    % Determino posizione e orientamento corrente dell'e.e
     % Aggiungo il valore corrente alla matrice delle pose
     xe_i = T0(1:3,4);
     rotM = T0(1:3,1:3);
@@ -65,7 +63,7 @@ for i = 1 : nPoints
     eO = quaternionError(QD, QE);
     errors(:,i) = [eP; eO];
     
-    % Calcolo il Jacobiano geometrico ed estraggo le righe funzionali
+    % Calcolo il Jacobiano geometrico
     J = Jacobian(DH);
 
     eTot = [matrixK_P*eP; matrixK_O*eO];
@@ -114,12 +112,12 @@ legend()
 grid on
 
 subplot(2,1,2)
-plot(t, errors(3,:), "LineWidth", 2, DisplayName="\phi error")
+plot(t, errors(3,:), "LineWidth", 2, DisplayName="\epsilon_x error")
 hold on
-plot(t, errors(4,:), "LineWidth", 2, DisplayName="\theta error")
-plot(t, errors(5,:), "LineWidth", 2, DisplayName="\psi error")
+plot(t, errors(4,:), "LineWidth", 2, DisplayName="\epsilon_y error")
+plot(t, errors(5,:), "LineWidth", 2, DisplayName="\epsilon_z error")
 xlabel("Time [s]")
-ylabel("Orientation errors [rad]")
+ylabel("Orientation errors")
 title("Orientation errors")
 legend()
 grid on
@@ -140,7 +138,6 @@ legend(realplot, "Traiettoria", "Start point", "Set point")
 grid on
 
 %% Variabili di giunto definitive
-
 clc
 disp("Le variabali di giunto da considerare sono:");
 fprintf("\n");

@@ -6,15 +6,11 @@ close all
 clc
 
 addpath("..\FUNCTIONS\");
+addpath("..\DRAW_ROBOT\");
+addpath("FILES\");
 
 % Richiamo la configurazione iniziale del manipolatore
-
-a = [1 1 1]';
-alfa = [0 0 0]';
-d = [0 0 0]';
-theta = [pi/2 -pi/2 -pi/2]';
-
-DH = [a alfa d theta];
+init_ES1;
 
 % Definisco le variabili temporali di simulazione
 Tf = 3;
@@ -33,7 +29,7 @@ errors = zeros(nLink, nPoints);
 DHS = zeros(nLink, 4, nPoints);
 
 % Definisco il set point desiderato
-xd = [1.8 0.6 pi/8]';
+xd = [0.9 0.6 pi/8]';
 
 % Definisco la matrice dei guadagni
 matrixK = diag([25 25 25]);
@@ -41,7 +37,7 @@ matrixK = diag([25 25 25]);
 % Salvo la prima tabella DH
 firstDH = DH;
 
-inverseKinematicsType = "transpose";
+inverseKinematicsType = "inverse";
 
 for i = 1 : nPoints
     
@@ -127,7 +123,6 @@ legend(realplot, "Traiettoria", "Start point", "Set point")
 grid on
 
 %% Variabili di giunto definitive
-
 clc
 disp("Le variabali di giunto da considerare sono:");
 fprintf("\n");

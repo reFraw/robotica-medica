@@ -56,9 +56,9 @@ cruiseVelPos = 0.1;
 finalTimePos = 5;
 
 % Parametri traiettoria orientamento
-firstRotation = zyz2rot([pi 0 0]);
-secondRotation = zyz2rot([0 pi 0]);
-fullRotation = firstRotation*secondRotation;
+firstRotation = zRot(pi);
+secondRotation = yRot(pi);
+fullRotation = secondRotation*firstRotation;
 Rif = startRotationMatrix'*fullRotation;
 
 [axis, finalTheta] = rot2axisangle(Rif);
@@ -132,7 +132,7 @@ end
 DHS(:,:,2) = DH;
 
 %% Connessione CoppeliaSim
-conn = connect2coppelia(q, 7, samplingTime);
+conn = connect2coppelia(q, simTime, samplingTime);
 
 %% Plot
 % Aggiungere eventuali plot di interesse
@@ -152,7 +152,7 @@ grid on
 xlabel("Tempo [s]");
 ylabel("Errore [u.a.]");
 title("Errore di orientamento");
-legend("Angolo \phi", "Angolo \theta", "Angolo \psi");
+legend("\epsilon_x", "\epsilon_y", "\epsilon_z");
 set(gca, "FontSize", 12);
 
 %% Configurazione iniziale e finale

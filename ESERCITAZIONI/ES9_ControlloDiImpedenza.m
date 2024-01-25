@@ -26,6 +26,7 @@ acceleration(1) = 0;
 % Guadagni
 KP = 10;
 KV = 10;
+Md = 4;
 K_EL = 100;
 
 % Stima parametri dinamici e posizione desiderata
@@ -43,10 +44,12 @@ for i = 1 : nPoints
     posErr(i) = xd - position(i);
     velErr(i) = xDotd - velocity(i);
 
-    u = mHat*(xDDotd + KV*velErr(i) + KP*posErr(i)-K_EL*position(i));
+    f = -K_EL*position(i);
+
+    u = (mHat/Md)*(Md*xDDotd+KV*velErr(i)+KP*posErr(i)-f);
 
     if i < nPoints
-        acceleration(i+1) = (u + K_EL*position(i))/m;
+        acceleration(i+1) = (u + f)/m;
         velocity(i+1) = velocity(i) + samplingTime*acceleration(i+1);
         position(i+1) = position(i) + samplingTime*velocity(i+1);
     end

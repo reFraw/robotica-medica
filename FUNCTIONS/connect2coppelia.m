@@ -1,4 +1,4 @@
-function connection = connect2coppelia( ...
+  function connection = connect2coppelia( ...
     q, ...
     simulationTime, ...
     samplingTime)
@@ -9,21 +9,31 @@ function connection = connect2coppelia( ...
 %           1. q : Matrix whose columns represent the joint variables for each sampling step.
 %           2. SimulationTime : Simulation time in the CoppeliaSim
 %           environment.
+%           3. SamplingTime : Sampling time in the CoppeliaSim enviroment.
 %
 %   OUTPUT:
 %           1. connection : Object that maintains the connection.
 %
 
+    porta = 19997;
+    
+    % Individuo durata della simulazione MATLAB
     sizeQ = size(q);
     planningPoints = sizeQ(2);
-
-    porta = 19997;
+    
+    % Individuo durata della simulazione CoppeliaSim
     t = 0 : samplingTime : simulationTime;
     N = length(t);
-
+    
     if planningPoints > N
+        % Se il Coppelia SimulationTime è inferiore del MATLAB
+        % SimulationTime forza la durata della simulazione Coppelia a
+        % MATLAB SimulationTime.
         N = planningPoints;
     else
+        % Se il Coppelia SimulationTime è maggiore del MATLAB
+        % SimulationTime, aggiunge colonne alla matrice q (ultimo valore assunto) fino a coprire
+        % tutto il tempo di simulazione.
         addPoint = N - planningPoints;
         addQ = repmat(q(:,end), 1 ,addPoint);
         q = [q addQ];

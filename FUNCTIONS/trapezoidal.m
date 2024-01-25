@@ -44,12 +44,17 @@ function [currentPosition, currentVelocity, currentAcceleration] = trapezoidal( 
         if ~((abs(qDotC_i)>checkTerm) && (abs(qDotC_i)<=2*checkTerm))
 
             newCruiseVel = 1.5*checkTerm;
+
             cruiseVelocities(i) = newCruiseVel;
 
         else
 
             cruiseVelocities(i) = qDotC_i;
 
+        end
+
+        if endPoint(i) < startPoint(i)
+            cruiseVelocities(i) = -cruiseVelocities(i);
         end
 
     end

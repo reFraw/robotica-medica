@@ -47,7 +47,7 @@ finalTime = 5;
 
 % Parametri traiettoria
 oriFinale = yRot(-pi/2);
-rpyFinale = rot2rpy(oriFinale,1);
+rpyFinale = rot2rpy(oriFinale, 1);
 
 Rif = oriIniziale'*oriFinale;
 [axis, finalTheta] = rot2axisangle(Rif);
@@ -127,7 +127,7 @@ conn = connect2coppelia(q, simTime, sampTime);
 %% Plot errore di orientamento
 figure
 plot(t, orientationErrors, LineWidth=1.5);
-legend("\phi", "\theta", "\psi");
+legend("\epsilon_x", "\epsilon_y", "\epsilon_z");
 xlabel("Tempo [s]");
 ylabel("Errore [u.a.]");
 title("Errore di orientamento")
