@@ -17,7 +17,3 @@
 - **Esercitazione 6** : Pianificazione di traiettorie (Kinova Jaco2).
 - **Esercitazione 7** : Confronto della pianificazione dell'orientamento usando angoli RPY e asse-angolo (Kinova Jaco2).
 - **Esercitazione 8** : Pianificazione di una traiettoria circolare (Kinova Jaco2).
-
-### Descrizione Connect2Coppelia
-Questa funzione permette di visualizzare il movimento del manipolatore Jaco2 tramite il software CoppeliaSim.
-La funzione prende in input una matrice rappresentativa delle variabili di giunto nei singoli istanti, il tempo di simulazione per visualizzare il movimento su CoppeliaSim e il tempo di campionamento impostato per la simulazione.
