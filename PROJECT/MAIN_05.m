@@ -6,6 +6,7 @@ clc
 
 addpath("..\FUNCTIONS\");
 addpath("..\DRAW_ROBOT\");
+addpath("AUX_SCRIPT\");
 addpath(genpath("..\COPPELIA\"));
 
 % Variabili temporali di simulazione
@@ -40,12 +41,12 @@ Rif = Ri'*Rf;
 [axis, thetaFin] = rot2axisangle(Rif);
 
 % Guadagni del manipolatore
-pGain = 75;
-oGain = 75;
+pGain = 55;
+oGain = 55;
 K = diag([ ...
     pGain*[1 1 1], ...
     oGain*[1 1 1]]);
-k0 = 50;
+k0 = 150;
 
 % Variabili di salvataggio
 q = zeros(DOF, nPoints);
@@ -86,7 +87,7 @@ for i = 1 : nPoints
         desiredAngularVelocity = zeros(3,1);
 
         lastIndex = i;
-
+        
     else
         % Traslazione temporale per evitare sfasamento tra movimento
         % dell'E.E. e movimento del punto target.
@@ -116,9 +117,6 @@ for i = 1 : nPoints
     J = Jacobian(DH);
     invJ = pinv_damped(J);
 
-    % Calcolo della matrice di manipolabilità
-    M = inv(J*J');
-    
     % Calcolo del minimo e massimo valor singolare di J
     S = svd(J);
     minSVDvalue = min(S);
@@ -127,20 +125,15 @@ for i = 1 : nPoints
     maxSVD(i) = maxSVDvalue;
     
     % Calcolo della manipolabilità
-    manipulability(i) = minSVDvalue/maxSVDvalue;
-    
-    % Individuazione della direzione di minima manipolabilità nello spazio
-    % operativo. L'autovettore corrispondente viene normalizzato per il
-    % valore singolare associato.
-    [eigenvec, eigenval] = eig(M);
-    minManipDirection = eigenvec(:,1)./(sqrt(min(diag(eigenval))));
+    manipulability(i) = computeManipulability(DH(:,4));
 
-    % La velocità nello spazio dei giunti da proiettare nel nullo di J viene
-    % definita come la velocità che forza lo spostamento nella direzione
-    % di minima manipolabilità, inducendo l'ellissoide a tendere ad una sfera.
-    qDot0 = k0*invJ*minManipDirection;
+    % Calcolo del gradiente di w
+    dWdQ = computeJointGradient(DH(:,4), 1);
+
+    % Definizione della velocità da proiettare nel kernel di J
+    qDot0 = k0*dWdQ;
+
     kernelProjector = eye(7) - invJ*J;
-
     dqi = invJ*(feedForwardTerm + K*e) + kernelProjector*qDot0;
     dq(:,i) = dqi;
     q(:,i) = DH(:,4);
@@ -205,14 +198,15 @@ subplot 212
 plot(t, positionEE(3,:)'-pTargetMove, LineWidth=1.3);
 xlabel("Tempo [s]");
 ylabel("Scostamento \Delta s [m]");
+ylim([0 max(positionEE(3,:)'-pTargetMove)+0.1])
 title("Scostamento E.E. - p_{target}");
 grid on
 
 figure
-plot(t, manipulability, LineWidth=1.3);
+plot(t, manipulability/max(manipulability), LineWidth=1.3);
 xlabel("Tempo [s]")
 ylabel("Manipolabilità");
-title("Andamento della manipolabilità")
+title("Andamento della manipolabilità normalizzata - k_0=150")
 grid on
 
 figure
@@ -220,6 +214,38 @@ plot(t, minSVD, LineWidth=1.4, DisplayName="Minimo valor singolare");
 hold on
 plot(t, maxSVD, LineWidth=1.4, DisplayName="Massimo valor singolare");
 xlabel("Tempo [s]");
-title("Andamento del minimo e massimo valor singolare");
+title("Andamento del minimo e massimo valor singolare di J");
 legend()
 grid on
+
+checkManipulability;
+%% Funzioni ausiliarie
+
+function w = computeManipulability(jointConfig)
+    
+    DH = jaco2DH(jointConfig);
+    J = Jacobian(DH);
+    S = svd(J);
+    w = S(end)/S(1);
+
+end
+
+function dWdQ = computeJointGradient(jointConfig, h)
+
+    nComponents = length(jointConfig);
+
+    dWdQ = zeros(nComponents,1);
+
+    for i = 1 : nComponents
+
+        hi = zeros(7,1);
+        hi(i) = h;
+
+        wPlus = computeManipulability(jointConfig+hi);
+        wMinus = computeManipulability(jointConfig-hi);
+
+        dWdQ(i) = (wPlus-wMinus)/(2*h);
+
+    end
+
+end
