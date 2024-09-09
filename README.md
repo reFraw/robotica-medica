@@ -2,7 +2,6 @@
 ## Esercitazioni e progetto finale per il corso di Robotica Medica A.A. 2023/2024
 
 ## Descrizione
-### Descrizione esercitazioni
 - **Esercitazione 1** : Cinematica diretta.
 - **Esercitazione 2** : Jacobiano geometrico.
 - **Esercitazione 3** : Inversione cinematica per manipolatore planare a 3 bracci.
